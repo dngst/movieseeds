@@ -8,6 +8,9 @@ from tmdbv3api import TMDb, Movie
 tmdb = TMDb()
 tmdb.api_key = os.environ['TMDB_API_KEY']
 
+INPUT_FILE_PATH = 'movie_list.txt'
+SEEDS_FILE_PATH = 'seeds.rb'
+
 def read_movie_titles(file_path):
     '''read movie titles defined in text file; movie_list.txt'''
     with open(file_path, 'r') as file:
@@ -25,16 +28,13 @@ def read_existing_titles(file_path):
     return existing_titles
 
 def main():
-    '''get poster and IMDB page URL'''
-    input_file_path = 'movie_list.txt'
-    seeds_file_path = 'seeds.rb'
-
-    movie_titles = read_movie_titles(input_file_path)
-    existing_titles = read_existing_titles(seeds_file_path)
+    '''get poster and IMDB page URL, write seeds to file'''
+    movie_titles = read_movie_titles(INPUT_FILE_PATH)
+    existing_titles = read_existing_titles(SEEDS_FILE_PATH)
 
     movie_api = Movie()
 
-    with open(seeds_file_path, 'a') as seed_file:
+    with open(SEEDS_FILE_PATH, 'a') as seed_file:
         for title in movie_titles:
             if title not in existing_titles:
                 search_results = movie_api.search(title)
@@ -44,8 +44,11 @@ def main():
                         movie_details = movie_api.details(first_result.id)
                         poster_url = f"https://image.tmdb.org/t/p/w500{movie_details.poster_path}"
                         imdb_url = f"https://www.imdb.com/title/{movie_details.imdb_id}/"
-
-                        entry = f'Movie.create(title:"{title}", poster_img_url:"{poster_url}", imdb_page:"{imdb_url}")\n'
+                        entry = (
+                            f'Movie.create(title:"{title}", '
+                            f'poster_img_url:"{poster_url}", '
+                            f'imdb_page:"{imdb_url}")\n'
+                        )
                         seed_file.write(entry)
                         print(f"Seed added for: {title}")
                     except Exception as e:
