@@ -1,16 +1,20 @@
+'''
+Retrieves movie posters and IMDB page URLs for each movie title
+listed in a text file and uses the data to create database seeds
+'''
 import os
 from tmdbv3api import TMDb, Movie
 
 tmdb = TMDb()
 tmdb.api_key = os.environ['TMDB_API_KEY']
 
-# read movie titles defined in text file; movie_list.txt
 def read_movie_titles(file_path):
+    '''read movie titles defined in text file; movie_list.txt'''
     with open(file_path, 'r') as file:
         return [line.strip() for line in file]
 
-# check if movie title already exists in seed file; seeds.rb
 def read_existing_titles(file_path):
+    '''check if movie title already exists in seed file; seeds.rb'''
     existing_titles = []
     if os.path.exists(file_path):
         with open(file_path, 'r') as file:
@@ -20,8 +24,8 @@ def read_existing_titles(file_path):
                     existing_titles.append(title)
     return existing_titles
 
-# get poster and IMDB page URL
 def main():
+    '''get poster and IMDB page URL'''
     input_file_path = 'movie_list.txt'
     seeds_file_path = 'seeds.rb'
 
@@ -53,4 +57,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
