@@ -1,37 +1,43 @@
 import os
-from tmdbv3api import TMDb
-from tmdbv3api import Movie
+from tmdbv3api import TMDb, Movie
 
 tmdb = TMDb()
 tmdb.api_key = os.environ['TMDB_API_KEY']
 
+# read movie titles defined in text file; movie_list.txt
 def read_movie_titles(file_path):
     with open(file_path, 'r') as file:
-        return [line.strip() for line in file.readlines()]
+        return [line.strip() for line in file]
 
+# check if movie title already exists in seed file; seeds.rb
 def read_existing_titles(file_path):
+    existing_titles = []
     if os.path.exists(file_path):
         with open(file_path, 'r') as file:
-            return [line.strip().split('"')[1] for line in file.readlines() if line.strip().startswith('Movie.create(title:')]
-    return []
+            for line in file:
+                if line.strip().startswith('Movie.create(title:'):
+                    title = line.strip().split('"')[1]
+                    existing_titles.append(title)
+    return existing_titles
 
+# get poster and IMDB page URL
 def main():
-    file_path = 'movie_list.txt'
-    seeds_path = 'seeds.rb'
+    input_file_path = 'movie_list.txt'
+    seeds_file_path = 'seeds.rb'
 
-    movie_titles = read_movie_titles(file_path)
-    existing_titles = read_existing_titles(seeds_path)
+    movie_titles = read_movie_titles(input_file_path)
+    existing_titles = read_existing_titles(seeds_file_path)
 
-    movie = Movie()
+    movie_api = Movie()
 
-    with open(seeds_path, 'a') as seed_file:
+    with open(seeds_file_path, 'a') as seed_file:
         for title in movie_titles:
             if title not in existing_titles:
-                search_results = movie.search(title)
+                search_results = movie_api.search(title)
                 if search_results:
                     try:
                         first_result = search_results[0]
-                        movie_details = movie.details(first_result.id)
+                        movie_details = movie_api.details(first_result.id)
                         poster_url = f"https://image.tmdb.org/t/p/w500{movie_details.poster_path}"
                         imdb_url = f"https://www.imdb.com/title/{movie_details.imdb_id}/"
 
