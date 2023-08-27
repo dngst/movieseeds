@@ -2,7 +2,7 @@
 
 > Seeds for tonightswatch with data via themoviedb.org
 
-$ export TMDB_API_KEY=''
+$ touch .env && echo "TMDB_API_KEY=''" >> .env
 
 Add movie titles to movie_list.txt
 

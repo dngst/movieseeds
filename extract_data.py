@@ -4,9 +4,12 @@ listed in a text file and uses the data to create database seeds
 '''
 import os
 from tmdbv3api import TMDb, Movie
+from dotenv import load_dotenv
+
+load_dotenv()
 
 tmdb = TMDb()
-tmdb.api_key = os.environ['TMDB_API_KEY']
+tmdb.api_key = os.getenv('TMDB_API_KEY')
 
 INPUT_FILE_PATH = 'movie_list.txt'
 SEEDS_FILE_PATH = 'seeds.rb'
