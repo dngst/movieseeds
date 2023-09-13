@@ -1,3 +1,4 @@
 seeds.rb
 __pycache__/
 .env
+env/
