@@ -25,7 +25,7 @@ def read_existing_titles(file_path):
     if os.path.exists(file_path):
         with open(file_path, 'r') as file:
             for line in file:
-                if line.strip().startswith('Movie.create(title:'):
+                if line.strip().startswith('Movie.find_or_create_by!(title:'):
                     title = line.strip().split('"')[1]
                     existing_titles.append(title)
     return existing_titles
@@ -48,7 +48,7 @@ def main():
                         poster_url = f"https://image.tmdb.org/t/p/w500{movie_details.poster_path}"
                         imdb_url = f"https://www.imdb.com/title/{movie_details.imdb_id}/"
                         entry = (
-                            f'Movie.create(title:"{title}", '
+                            f'Movie.find_or_create_by!(title:"{title}", '
                             f'poster_img_url:"{poster_url}", '
                             f'imdb_page:"{imdb_url}")\n'
                         )
